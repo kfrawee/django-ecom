@@ -1,12 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-
 from .models import Cart, CartItem, Item, Order, OrderItem, Transaction
-
-
-class EndpointSerializer(serializers.Serializer):
-    path = serializers.CharField()
-    methods = serializers.ListField(child=serializers.CharField())
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
@@ -22,9 +16,14 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
 
 class ItemSerializer(serializers.ModelSerializer):
+    item_id = serializers.SerializerMethodField()
+
     class Meta:
         model = Item
-        fields = "__all__"
+        fields = ["item_id", "name", "price", "status"]
+
+    def get_item_id(self, obj):
+        return obj.id
 
 
 class CartItemSerializer(serializers.ModelSerializer):
@@ -36,11 +35,27 @@ class CartItemSerializer(serializers.ModelSerializer):
 
 
 class CartSerializer(serializers.ModelSerializer):
-    items = CartItemSerializer(many=True)
+    cart_id = serializers.SerializerMethodField()
+    user_id = serializers.SerializerMethodField()
+    username = serializers.SerializerMethodField()
+    total_price = serializers.SerializerMethodField()
+    items = CartItemSerializer(source="cartitem_set", many=True)
 
     class Meta:
         model = Cart
-        fields = ["user", "items"]
+        fields = ["cart_id", "user_id", "username", "items", "total_price"]
+
+    def get_user_id(self, obj):
+        return obj.user.id
+
+    def get_cart_id(self, obj):
+        return obj.id
+
+    def get_username(self, obj):
+        return obj.user.username
+
+    def get_total_price(self, obj):
+        return obj.total_price
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -52,11 +67,38 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    items = OrderItemSerializer(many=True)
+    order_id = serializers.SerializerMethodField()
+    items = OrderItemSerializer(source="orderitem_set", many=True)
 
     class Meta:
         model = Order
-        fields = ["user", "items", "total_amount", "is_paid"]
+        fields = ["order_id", "user", "items", "total_amount", "is_paid"]
+
+    def get_order_id(self, obj):
+        return obj.id
+
+
+class PlaceOrderSerializer(serializers.ModelSerializer):
+    place_order = serializers.BooleanField()
+
+    class Meta:
+        model = Order
+        fields = ["place_order"]
+
+
+class OrderListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ["id", "user", "total_amount", "is_paid"]
+        read_only_fields = fields
+
+
+class PayOrderSerializer(serializers.ModelSerializer):
+    pay = serializers.BooleanField()
+
+    class Meta:
+        model = Transaction
+        fields = ["pay"]
 
 
 class TransactionSerializer(serializers.ModelSerializer):

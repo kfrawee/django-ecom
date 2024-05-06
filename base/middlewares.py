@@ -19,23 +19,13 @@ def generate_request_id_hex():
 def get_request_id(request):
     if hasattr(request, "request_id"):
         if not request.request_id:
-            request.request_id = generate_request_id_hex()
+            return generate_request_id_hex()
         return request.request_id
-    elif "HTTP_X_REQUEST_ID" in request.META:
-        # STANDARD WAY OF HANDLING REQUEST_ID
-        return request.META["HTTP_X_REQUEST_ID"]
-    elif "HTTP_X_AMZN_TRACE_ID" in request.META:
-        return request.META["HTTP_X_AMZN_TRACE_ID"]
     else:
         return generate_request_id_hex()
 
 
 class RequestIdTraceMiddleware(RequestIdMiddleware):
-    """
-    Override request_id middle to parse X_AMZN_TRACE_ID,
-    and set uuid for any request without a tracing id.
-    """
-
     def __call__(self, request):
         request_id = get_request_id(request)
         request.request_id = request_id
@@ -86,5 +76,10 @@ class LoggingMiddleware:
                 else "Something went wrong. Our support team has been notified.",
                 "time": str(datetime.now()),
             }
+            if settings.DEBUG:
+                import sys
+                import traceback
+
+                response_data["traceback"] = "".join(traceback.format_exception(*sys.exc_info()))
             return JsonResponse(response_data, status=500)
         return None

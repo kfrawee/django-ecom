@@ -13,9 +13,17 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 
+import environ
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
 
 # Define the path to the logs directory
 LOGS_DIR = os.path.join(BASE_DIR, "logs")
@@ -27,10 +35,11 @@ os.makedirs(LOGS_DIR, exist_ok=True)
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-3yd9&ywh7*w^-qm-1kwefv2nx2uvk2xa8!#9dczv((z#zxw$a*"
+SECRET_KEY = env.str("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool("DEBUG", default=False)
+
 
 ALLOWED_HOSTS = []
 
@@ -46,7 +55,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "request_id",
     "rest_framework",
+    "django_extensions",
     "ecommerce",
+    "seeddata",
 ]
 
 MIDDLEWARE = [
@@ -87,12 +98,8 @@ WSGI_APPLICATION = "base.wsgi.application"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    "default": env.db_url("DATABASE_URL"),
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

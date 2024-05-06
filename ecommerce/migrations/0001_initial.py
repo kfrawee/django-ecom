@@ -74,24 +74,18 @@ class Migration(migrations.Migration):
                 ("quantity", models.PositiveIntegerField(default=1)),
                 (
                     "cart",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="ecommerce.cart"
-                    ),
+                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="ecommerce.cart"),
                 ),
                 (
                     "item",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="ecommerce.item"
-                    ),
+                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="ecommerce.item"),
                 ),
             ],
         ),
         migrations.AddField(
             model_name="cart",
             name="items",
-            field=models.ManyToManyField(
-                through="ecommerce.CartItem", to="ecommerce.item"
-            ),
+            field=models.ManyToManyField(through="ecommerce.CartItem", to="ecommerce.item"),
         ),
         migrations.CreateModel(
             name="Order",
@@ -112,9 +106,7 @@ class Migration(migrations.Migration):
                 ("is_paid", models.BooleanField(default=False)),
                 (
                     "cart",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="ecommerce.cart"
-                    ),
+                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="ecommerce.cart"),
                 ),
                 (
                     "user",
@@ -140,9 +132,7 @@ class Migration(migrations.Migration):
                 ("quantity", models.PositiveIntegerField(default=1)),
                 (
                     "item",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="ecommerce.item"
-                    ),
+                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="ecommerce.item"),
                 ),
                 (
                     "order",
