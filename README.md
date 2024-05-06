@@ -1,3 +1,1 @@
-# django ecom
-# django-ecom
-# django-ecom
+# Basic Django E commerce project
