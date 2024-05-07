@@ -19,12 +19,12 @@
     ```bash
     mv .env-template .env
     ```
-- Change any values in .env file as required
+- Change any values in .env file as needed
 
 ## Usage
 - Migrate database
     ```bash
-    python manage.py cmakemigrations
+    python manage.py makemigrations
     python manage.py migrate
     ```
 - Run data seeders
@@ -43,7 +43,7 @@
     python manage.py runserver
     ```
 
-**NOTE** Authentication is not implemented yet. Views have been bypassed with `user0` for testing purposes.
+**NOTE** Authentication is not implemented yet. Views have been bypassed with `user0` credentials for developing and testing purposes.
 
 ---
 
