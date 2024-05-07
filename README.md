@@ -17,7 +17,7 @@
 ## Prerequisites
 - Create .env file
     ```bash
-    mv .env.example .env
+    mv .env-template .env
     ```
 - Change any values in .env file as required
 
